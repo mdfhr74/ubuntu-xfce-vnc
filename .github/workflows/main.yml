@@ -1,0 +1,25 @@
+name: Ubuntu XFCE VNC
+
+on: [workflow_dispatch]
+
+jobs:
+  start-desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Set up XFCE and VNC
+        run: |
+          sudo apt update
+          sudo apt install xfce4 xfce4-goodies tightvncserver -y
+          vncserver :1
+          vncserver -kill :1
+          echo "#!/bin/bash
+          xrdb $HOME/.Xresources
+          startxfce4 &" > ~/.vnc/xstartup
+          chmod +x ~/.vnc/xstartup
+          vncserver :1
+
+      - name: Prevent idle timeout
+        run: |
+          while true; do echo "Running..."; sleep 60; done
